@@ -1,26 +1,30 @@
 using Bloggie.Web.Data;
 using Bloggie.Web.Models.Domain;
 using Bloggie.Web.Models.ViewModels;
+using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.Text.Json;
 
 namespace Bloggie.Web.Pages.Admin.Blogs
 {
     public class AddModel : PageModel
     {
-        private readonly BloggieDbContext _bloggieDbContext;
+        
 
         [BindProperty]
         public AddBlogPost AddBlogPostRequest { get; set; }
+        public IBlogPostRepository BlogPostRepository { get; }
+
         //create constructor 
-        public AddModel(BloggieDbContext bloggieDbContext)
+        public AddModel(IBlogPostRepository blogPostRepository)
         {
-            _bloggieDbContext = bloggieDbContext;
+            BlogPostRepository = blogPostRepository;
         }
         public void OnGet()
         {
         }
-        public IActionResult OnPost() {
+        public async Task<IActionResult> OnPost() {
             BlogPost blogpost = new BlogPost()
             {
                 Heading = AddBlogPostRequest.Heading,
@@ -33,8 +37,16 @@ namespace Bloggie.Web.Pages.Admin.Blogs
                 Author = AddBlogPostRequest.Author,
                 Visible = AddBlogPostRequest.Visible
             };
-            _bloggieDbContext.BlogPosts.Add(blogpost);
-            _bloggieDbContext.SaveChanges();
+            await this.BlogPostRepository.AddBlogPostAsync(blogpost);
+            var jsonNotification = new Notification()
+            {
+                Message = "BlogBost was successfully Created",
+                Type = Enums.NotificationType.Success
+            };
+
+            TempData["Notification"] = JsonSerializer.Serialize(jsonNotification);
+
+
             return RedirectToPage("/admin/blogs/list");
         }
     }
