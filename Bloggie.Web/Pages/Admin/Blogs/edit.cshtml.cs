@@ -49,9 +49,9 @@ namespace Bloggie.Web.Pages.Admin.Blogs
         {
             bool deleted =  await this.BlogPostRepository.DeleteBlogPostAsync(BlogPost.Id);
             if (deleted)
-            {
+        {
                 var jsonNotification = new Notification()
-                {
+            {
                     Message = "BlogBost was successfully Deleted",
                     Type = Enums.NotificationType.Info
                 };
