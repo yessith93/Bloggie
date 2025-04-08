@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Bloggie.Web.Repositories;
+using Microsoft.AspNetCore.Mvc;
 
 namespace Bloggie.Web.Controllers
 {
@@ -6,6 +7,11 @@ namespace Bloggie.Web.Controllers
     [Route("api/images")]
     public class ImagesController : Controller
     {
+        private readonly IImageRepository _imageRepository;
+        public ImagesController(IImageRepository imageRepository)
+        {
+            _imageRepository = imageRepository;
+        }
         [HttpGet]
         public IActionResult Index()
         {
@@ -15,7 +21,12 @@ namespace Bloggie.Web.Controllers
         [HttpPost]
         public async Task<IActionResult> UploadAsync(IFormFile file)
         {
-            return Ok("Imagen cargada exitosamente");
+            var imageUrl = await _imageRepository.UploadAsync(file);
+            if (string.IsNullOrEmpty(imageUrl))
+            {
+                return BadRequest("Error al cargar la imagen");
+            }
+            return Json(new {link = imageUrl });
         }
     }
 }

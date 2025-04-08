@@ -1,11 +1,33 @@
 ﻿
+using CloudinaryDotNet;
+using System.Net;
+
 namespace Bloggie.Web.Repositories
 {
     public class ImageRepositoryCloudinary : IImageRepository
     {
-        public Task<string> UploadAsync(IFormFile file)
+        private readonly Account _account;
+        public ImageRepositoryCloudinary(IConfiguration configuration)
         {
-            throw new NotImplementedException();
+            _account = new Account(
+                configuration.GetSection("Cloudinary")["CloudName"],
+                configuration.GetSection("Cloudinary")["ApiKey"],
+                configuration.GetSection("Cloudinary")["ApiSecret"]
+            );
+        }
+        public async Task<string> UploadAsync(IFormFile file)
+        {
+            var client = new Cloudinary(_account);
+            var uploadFileResult = await client.UploadAsync(new CloudinaryDotNet.Actions.ImageUploadParams()
+            {
+                File = new FileDescription(file.FileName, file.OpenReadStream()),
+                DisplayName = file.FileName
+            });
+            if (uploadFileResult!= null && uploadFileResult.StatusCode == HttpStatusCode.OK)
+            {
+                return uploadFileResult.SecureUrl.ToString();
+            }
+            return string.Empty;
         }
     }
 }
