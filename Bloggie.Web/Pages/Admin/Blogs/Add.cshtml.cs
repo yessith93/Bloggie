@@ -10,8 +10,6 @@ namespace Bloggie.Web.Pages.Admin.Blogs
 {
     public class AddModel : PageModel
     {
-        
-
         [BindProperty]
         public AddBlogPost AddBlogPostRequest { get; set; }
         public IBlogPostRepository BlogPostRepository { get; }
