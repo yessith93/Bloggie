@@ -32,22 +32,22 @@ namespace Bloggie.Web.Repositories
 
         public async Task<IEnumerable<BlogPost>> GetAllBlogPostsAsync()
         {
-            return await _bloggieDbContext.BlogPosts.ToListAsync();
+            return await _bloggieDbContext.BlogPosts.Include(nameof(BlogPost.tags)).ToListAsync();
         }
 
         public async Task<BlogPost> GetBlogPostByIdAsync(Guid id)
         {
-            return await _bloggieDbContext.BlogPosts.FindAsync(id);
+            return await _bloggieDbContext.BlogPosts.Include(nameof(BlogPost.tags)).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<BlogPost> GetBlogPostByUrlAsync(string UrlHandle)
         {
-            return await _bloggieDbContext.BlogPosts.FirstOrDefaultAsync(x=> x.UrlHandle == UrlHandle);
+            return await _bloggieDbContext.BlogPosts.Include(nameof(BlogPost.tags)).FirstOrDefaultAsync(x=> x.UrlHandle == UrlHandle);
         }
 
         public async Task<BlogPost> UpdateBlogPostAsync(BlogPost blogPost)
         {
-            BlogPost? existingBlogpost = await _bloggieDbContext.BlogPosts.FindAsync(blogPost?.Id);
+            BlogPost? existingBlogpost = await _bloggieDbContext.BlogPosts.Include(nameof(BlogPost.tags)).FirstOrDefaultAsync(x => x.Id == blogPost.Id);
             if (existingBlogpost != null)
             {
                 existingBlogpost.Heading = blogPost.Heading;
@@ -59,6 +59,14 @@ namespace Bloggie.Web.Repositories
                 existingBlogpost.PublishedDate = blogPost.PublishedDate;
                 existingBlogpost.Author = blogPost.Author;
                 existingBlogpost.Visible = blogPost.Visible;
+
+                if (blogPost.tags != null && blogPost.tags.Any()) { 
+                    //delete the old tags
+                    _bloggieDbContext.Tags.RemoveRange(existingBlogpost.tags);
+                    // add the new tags
+                    blogPost.tags.ToList().ForEach(x => x.BlogPostId = existingBlogpost.Id);
+                    await _bloggieDbContext.Tags.AddRangeAsync(blogPost.tags);
+                }
             }
             await _bloggieDbContext.SaveChangesAsync();
             return existingBlogpost;

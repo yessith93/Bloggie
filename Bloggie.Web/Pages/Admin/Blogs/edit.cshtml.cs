@@ -18,15 +18,21 @@ namespace Bloggie.Web.Pages.Admin.Blogs
         {
             this.BlogPostRepository = BlogPostRepository;
         }
+        [BindProperty]
+        public String Tags { get; set; }
 
         public async Task OnGet(Guid id)
         {
             BlogPost = await this.BlogPostRepository.GetBlogPostByIdAsync(id);
+            if (BlogPost?.tags != null) { 
+                Tags = BlogPost.tags.Select(x => x.Name).Aggregate((x, y) => x + ", " + y);
+            }
         }
         public async Task<IActionResult> OnPostEdit()
         {
             try
             {
+                BlogPost.tags = new List<Tag>(Tags.Split(',').Select(x => new Tag() { Name = x.Trim() }));
                 await this.BlogPostRepository.UpdateBlogPostAsync(BlogPost);
                 ViewData["Notification"] = new Notification()
                 {
@@ -51,7 +57,7 @@ namespace Bloggie.Web.Pages.Admin.Blogs
             if (deleted)
         {
                 var jsonNotification = new Notification()
-            {
+                {
                     Message = "BlogBost was successfully Deleted",
                     Type = Enums.NotificationType.Info
                 };

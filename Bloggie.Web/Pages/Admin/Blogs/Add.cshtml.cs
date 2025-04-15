@@ -1,3 +1,4 @@
+using Azure;
 using Bloggie.Web.Data;
 using Bloggie.Web.Models.Domain;
 using Bloggie.Web.Models.ViewModels;
@@ -13,6 +14,8 @@ namespace Bloggie.Web.Pages.Admin.Blogs
         [BindProperty]
         public AddBlogPost AddBlogPostRequest { get; set; }
         public IBlogPostRepository BlogPostRepository { get; }
+        [BindProperty]
+        public string Tags { get; set; }
 
         //create constructor 
         public AddModel(IBlogPostRepository blogPostRepository)
@@ -33,7 +36,8 @@ namespace Bloggie.Web.Pages.Admin.Blogs
                 UrlHandle = AddBlogPostRequest.UrlHandle,
                 PublishedDate = AddBlogPostRequest.PublishedDate,
                 Author = AddBlogPostRequest.Author,
-                Visible = AddBlogPostRequest.Visible
+                Visible = AddBlogPostRequest.Visible,
+                tags = new List<Tag>(Tags.Split(',').Select(x => new Tag() { Name = x.Trim() }))
             };
             await this.BlogPostRepository.AddBlogPostAsync(blogpost);
             var jsonNotification = new Notification()
