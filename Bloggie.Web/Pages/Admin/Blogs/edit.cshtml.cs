@@ -24,8 +24,9 @@ namespace Bloggie.Web.Pages.Admin.Blogs
         public async Task OnGet(Guid id)
         {
             BlogPost = await this.BlogPostRepository.GetBlogPostByIdAsync(id);
-            if (BlogPost?.tags != null) { 
-                Tags = BlogPost.tags.Select(x => x.Name).Aggregate((x, y) => x + ", " + y);
+            if (BlogPost!=null && BlogPost.tags != null) {
+                //Tags = BlogPost.tags.Select(x => x.Name).Aggregate((x, y) => x + ", " + y);
+                Tags = string.Join(", ", BlogPost.tags.Select(x=>x.Name));
             }
         }
         public async Task<IActionResult> OnPostEdit()
