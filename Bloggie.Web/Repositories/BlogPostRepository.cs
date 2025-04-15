@@ -35,6 +35,15 @@ namespace Bloggie.Web.Repositories
             return await _bloggieDbContext.BlogPosts.Include(nameof(BlogPost.tags)).ToListAsync();
         }
 
+        public async Task<IEnumerable<BlogPost>> GetAllBlogPostsAsync(string tagName)
+        {
+            return await _bloggieDbContext.BlogPosts
+                .Include(nameof(BlogPost.tags)) // Incluye las tags relacionadas
+                .Where(x => x.tags.Any(x => x.Name == tagName)) // Filtra por nombre de tag
+                .ToListAsync(); // Ejecuta la consulta y retorna la lista
+                
+        }
+
         public async Task<BlogPost> GetBlogPostByIdAsync(Guid id)
         {
             return await _bloggieDbContext.BlogPosts.Include(nameof(BlogPost.tags)).FirstOrDefaultAsync(x => x.Id == id);
