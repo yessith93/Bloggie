@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Bloggie.Web.Pages
+namespace Bloggie.Web.Pages.Auth
 {
     public class LogoutModel : PageModel
     {
@@ -15,7 +15,7 @@ namespace Bloggie.Web.Pages
         public async Task<IActionResult> OnGet()
         {
             await _signInManager.SignOutAsync();
-            return RedirectToPage("Index");
+            return RedirectToPage("../Index");
         }
     }
 }

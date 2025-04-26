@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 
-namespace Bloggie.Web.Pages
+namespace Bloggie.Web.Pages.Auth
 {
     public class LoginModel : PageModel
     {
@@ -24,7 +24,7 @@ namespace Bloggie.Web.Pages
 
             if (signInResult.Succeeded)
             {
-                return RedirectToPage("Index");
+                return RedirectToPage("../Index");
             }
             else
             {
