@@ -18,12 +18,16 @@ namespace Bloggie.Web.Pages.Auth
         public void OnGet()
         {
         }
-        public async Task<IActionResult> OnPost(string url) 
+        public async Task<IActionResult> OnPost(string ReturnUrl) 
         {
             var signInResult = await _signInManager.PasswordSignInAsync(LoginViewModel.Username, LoginViewModel.Password, isPersistent: false, lockoutOnFailure: false);
 
             if (signInResult.Succeeded)
             {
+                if (!string.IsNullOrEmpty(ReturnUrl.Trim()))
+                {
+                    return LocalRedirect(ReturnUrl);
+                }
                 return RedirectToPage("../Index");
             }
             else
