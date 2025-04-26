@@ -31,13 +31,17 @@ namespace Bloggie.Web.Pages
 
             if (identityResult.Succeeded)
             {
-                ViewData["Notification"] = new Notification
+                var addRolesResult = await _userManager.AddToRoleAsync(user, "user");
+                if (!addRolesResult.Succeeded)
                 {
-                    Type = Enums.NotificationType.Success,
-                    Message = "User registered successfully."
-                };
+                    ViewData["Notification"] = new Notification
+                    {
+                        Type = Enums.NotificationType.Error,
+                        Message = "Something went wrong."
+                    };
+                    return Page();
+                }
 
-                return Page();
             }
             ViewData["Notification"] = new Notification
             {
