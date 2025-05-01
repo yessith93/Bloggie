@@ -14,5 +14,6 @@
         public bool Visible { get; set; }
         //Navigation property 
         public ICollection <Tag> tags { get; set; }
+        public ICollection<BlogPostLike> Likes { get; set; }
     }
 }
