@@ -2,6 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @model Bloggie.Web.Pages.Blog.detailsModel
 @inject UserManager<IdentityUser> userManager
+@inject SignInManager<IdentityUser> signManager
 @{
     ViewData["Title"] = Model.BlogPost.PageTitle;
 }
@@ -31,17 +32,19 @@
                 </div>
                 <div class="mb-3">
                     <span>
-                        @if (Model.Liked)
-                        {
-                            <a style="cursor: pointer">
-                                <i class="bi bi-hand-thumbs-up-fill"></i>
-                            </a>
-                        }
-                        else
-                        {
-                            <a id="btnLike" style="cursor: pointer">
-                                <i class="bi bi-hand-thumbs-up"></i>
-                            </a>
+                        @if(signManager.IsSignedIn(User)){
+                            @if (Model.Liked)
+                            {
+                                <a style="cursor: pointer">
+                                    <i class="bi bi-hand-thumbs-up-fill"></i>
+                                </a>
+                            }
+                            else
+                            {
+                                <a id="btnLike" style="cursor: pointer">
+                                    <i class="bi bi-hand-thumbs-up"></i>
+                                </a>
+                            }
                         }
                         <span id="totalLikes">@Model.Likes </span> Likes
                     </span>
