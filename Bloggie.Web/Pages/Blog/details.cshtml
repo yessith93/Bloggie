@@ -1,5 +1,7 @@
 ﻿@page "/blog/{UrlHandle}"
+@using Microsoft.AspNetCore.Identity
 @model Bloggie.Web.Pages.Blog.detailsModel
+@inject UserManager<IdentityUser> userManager
 @{
     ViewData["Title"] = Model.BlogPost.PageTitle;
 }
@@ -48,4 +50,29 @@
         </div>
     </div>
 </div>
+<script>
+    const btnLike = document.getElementById('btnLike');
+
+    async function addLikeForBlog() {
+        fetch('/api/blogpostlike/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': '*/*'
+            },
+            body: JSON.stringify({
+                blogPostId: '@Model.BlogPost.Id',
+                userId: '@userManager.GetUserId(User)'
+            })
+        })
+        .then(() => console.log('request finished.'))
+        .then(() => {
+            btnLike.innerHTML = '<i class="bi bi-hand-thumbs-up-fill"></i>';
+            btnLike.removeEventListener('click', addLikeForBlog);
+        });;
+    }
+
+    btnLike.addEventListener('click', addLikeForBlog);
+</script>
+
 
