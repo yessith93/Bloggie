@@ -31,10 +31,20 @@
                 </div>
                 <div class="mb-3">
                     <span>
-                        <a id="btnLike" style="cursor:pointer;">
-                            <i class="bi bi-hand-thumbs-up"></i>
-                        </a>
-                    @Model.Likes likes	</span>
+                        @if (Model.Liked)
+                        {
+                            <a style="cursor: pointer">
+                                <i class="bi bi-hand-thumbs-up-fill"></i>
+                            </a>
+                        }
+                        else
+                        {
+                            <a id="btnLike" style="cursor: pointer">
+                                <i class="bi bi-hand-thumbs-up"></i>
+                            </a>
+                        }
+                        <span id="totalLikes">@Model.Likes </span> Likes
+                    </span>
                 </div>
 	              <!-- Aquí podrías mostrar el contenido completo -->
                 <img src="@Model.BlogPost.FeaturedImageUrl" alt="@Model.BlogPost.Heading" class="img-fluid mb-3" />
@@ -52,6 +62,21 @@
 </div>
 <script>
     const btnLike = document.getElementById('btnLike');
+    const totalLikesElement = document.getElementById('totalLikes')
+
+    async function UpdateTotalLikesElement() {
+        fetch('/api/blogpostlike/@Model.BlogPost.Id/totallikes', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': '*/*'
+            }
+        })
+        .then(data => data.json())
+        .then(result => totalLikesElement.innerHTML = result);
+    }
+    
+
 
     async function addLikeForBlog() {
         fetch('/api/blogpostlike/add', {
@@ -69,10 +94,11 @@
         .then(() => {
             btnLike.innerHTML = '<i class="bi bi-hand-thumbs-up-fill"></i>';
             btnLike.removeEventListener('click', addLikeForBlog);
-        });;
+        })
+        .then(() => UpdateTotalLikesElement() );
     }
 
-    btnLike.addEventListener('click', addLikeForBlog);
+    btnLike &&  btnLike.addEventListener('click', addLikeForBlog);
 </script>
 
 
