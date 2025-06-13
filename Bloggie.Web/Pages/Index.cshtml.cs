@@ -11,7 +11,7 @@ namespace Bloggie.Web.Pages
         private readonly IBlogPostRepository _blogPostRepository;
         private readonly ITagRepository _TagRepository;
         public List<BlogPost> Blogs { get; set; }
-        public List<Tag> Tags { get; set; }
+        public List<Tag>? Tags { get; set; }
 
         public IndexModel(ILogger<IndexModel> logger, IBlogPostRepository BlogPostRepository,ITagRepository tagRepository)
         {
