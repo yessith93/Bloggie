@@ -1,0 +1,9 @@
+using Bloggie.Web.Models.Domain;
+
+namespace Bloggie.Web.Repositories.Comments
+{ 
+    public interface IBlogPostCommentRepository
+    {
+        Task<BlogPostComment> AddAsync(BlogPostComment blogPostComment);
+    }
+}

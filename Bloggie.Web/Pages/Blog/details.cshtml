@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Identity
 @model Bloggie.Web.Pages.Blog.detailsModel
 @inject UserManager<IdentityUser> userManager
-@inject SignInManager<IdentityUser> signManager
+@inject SignInManager<IdentityUser> signInManager
 @{
     ViewData["Title"] = Model.BlogPost.PageTitle;
 }
@@ -32,7 +32,7 @@
                 </div>
                 <div class="mb-3">
                     <span>
-                        @if(signManager.IsSignedIn(User)){
+                        @if(signInManager.IsSignedIn(User)){
                             @if (Model.Liked)
                             {
                                 <a style="cursor: pointer">
@@ -55,6 +55,29 @@
 
                     <p>@Html.Raw(Model.BlogPost.Content)</p>
                 </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Comments</h5>
+
+                        @if (signInManager.IsSignedIn(User))
+                        {
+                            <form method="post">
+                                <div class="mb-3">
+                                    <label class="form-label">Comment Description</label>
+                                    <input type="text" class="form-control" asp-for="@Model.CommentDescription" />
+                                </div>
+                                <div class="mb-3">
+                                    <button type="submit" class="btn btn-dark">Add Comment</button>
+                                    <input type="hidden" asp-for="@Model.BlogPostId"/>
+                                </div>
+                            </form>
+                        }
+                    </div>
+
+                    <div class="card-body">
+                    </div>
+                </div>
+
             }
             else
             {
