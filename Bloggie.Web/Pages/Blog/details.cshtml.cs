@@ -1,4 +1,5 @@
 using Bloggie.Web.Models.Domain;
+using Bloggie.Web.Models.ViewModels;
 using Bloggie.Web.Repositories;
 using Bloggie.Web.Repositories.Comments;
 using Bloggie.Web.Repositories.Likes;
@@ -20,6 +21,8 @@ namespace Bloggie.Web.Pages.Blog
         public int Likes { get; set; }
         public bool Liked { get; set; }
         public BlogPost BlogPost { get; set; }
+
+        public List<BlogComments> BlogComments { get; set; }
 
         [BindProperty]
         public Guid BlogPostId { get; set; }
@@ -56,6 +59,7 @@ namespace Bloggie.Web.Pages.Blog
 
                     Liked = likes.Any(x => x.UserId == Guid.Parse(userId));
                 }
+                await GetComments();
             }
             else
             {
@@ -76,6 +80,25 @@ namespace Bloggie.Web.Pages.Blog
                 });
             }
             return RedirectToPage("/blog/details", new { UrlHandle = UrlHandle });
+        }
+        
+        private async Task GetComments()
+        {
+            var blogPostComments = await _BlogPostCommentRepository.GetAllAsync(BlogPostId);
+
+            var blogCommentsViewModel = new List<BlogComments>();
+
+            foreach (var blogPostComment in blogPostComments)
+            {
+                blogCommentsViewModel.Add(new BlogComments
+                {
+                    DateAdded = blogPostComment.DateAdded,
+                    Description = blogPostComment.Description,
+                    Username = (await _userManager.FindByIdAsync(blogPostComment.UserId.ToString())).UserName
+                });
+            }
+
+            BlogComments = blogCommentsViewModel;
         }
     }
 }
