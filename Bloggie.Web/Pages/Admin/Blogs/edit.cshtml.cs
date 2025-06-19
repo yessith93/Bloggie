@@ -37,6 +37,7 @@ namespace Bloggie.Web.Pages.Admin.Blogs
             {
                 BlogPost.tags = new List<Tag>(Tags.Split(',').Select(x => new Tag() { Name = x.Trim() }));
                 await this.BlogPostRepository.UpdateBlogPostAsync(BlogPost);
+                
                 ViewData["Notification"] = new Notification()
                 {
                     Message = "Record was successfully saved",

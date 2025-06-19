@@ -24,7 +24,7 @@ namespace Bloggie.Web.Pages.Auth
 
             if (signInResult.Succeeded)
             {
-                if (!string.IsNullOrEmpty(ReturnUrl.Trim()))
+                if (!string.IsNullOrEmpty(ReturnUrl))
                 {
                     return LocalRedirect(ReturnUrl);
                 }
